@@ -9,59 +9,25 @@ logger = logging.getLogger(__name__)
 
 class ProductService:
     def __init__(self):
-        # Load mock data - replace with actual database in production
+        # This line stays the same
         self.products = self._load_mock_data()
     
     def _load_mock_data(self) -> List[Product]:
-        """Load mock Walmart-like product data"""
-        # This would be replaced with actual database queries
-        mock_products = [
-            {
-                "id": "walmart_001",
-                "title": "iPhone 15 Pro 128GB Natural Titanium",
-                "category": "Electronics",
-                "sub_category": "Smartphones",
-                "brand": "Apple",
-                "price": 999.00,
-                "original_price": 1099.00,
-                "discount_percentage": 9.1,
-                "availability": "In Stock",
-                "rating": 4.5,
-                "review_count": 1250,
-                "description": "The iPhone 15 Pro features a titanium design, A17 Pro chip, and advanced camera system.",
-                "specifications": {
-                    "storage": "128GB",
-                    "color": "Natural Titanium",
-                    "display": "6.1-inch Super Retina XDR",
-                    "camera": "48MP Main, 12MP Ultra Wide, 12MP Telephoto",
-                    "battery": "Up to 23 hours video playback"
-                },
-                "features": [
-                    "A17 Pro chip",
-                    "Titanium design",
-                    "48MP camera system",
-                    "USB-C connector"
-                ],
-                "images": [
-                    {"url": "/images/iphone15pro_1.jpg", "alt_text": "iPhone 15 Pro front", "is_primary": True},
-                    {"url": "/images/iphone15pro_2.jpg", "alt_text": "iPhone 15 Pro back", "is_primary": False}
-                ],
-                "seller": "Walmart",
-                "shipping_info": {
-                    "free_shipping": True,
-                    "shipping_cost": 0.0,
-                    "estimated_delivery": "2-3 business days",
-                    "same_day_delivery": True,
-                    "pickup_available": True
-                },
-                "return_policy": "30-day return policy",
-                "warranty": "1 year limited warranty",
-                "tags": ["apple", "iphone", "smartphone", "electronics"],
-                "is_bestseller": True,
-                "is_sponsored": False
-            }
-        ]
-        return [Product(**product) for product in mock_products]
+        """Load mock product data from the products.json file."""
+        try:
+            # The data directory is relative to the backend root
+            with open("data/products.json", 'r') as f:
+                products_data = json.load(f)
+            
+            # Use Pydantic to validate and parse the data into Product models
+            return [Product(**product) for product in products_data]
+        
+        except FileNotFoundError:
+            logger.error("data/products.json not found. Please run generate_mock_data.py first.")
+            return []
+        except Exception as e:
+            logger.error(f"Error loading or parsing products.json: {e}")
+            return []
     
     async def get_product_by_id(self, product_id: str) -> Product:
         """Get product by ID"""

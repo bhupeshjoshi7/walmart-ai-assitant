@@ -7,8 +7,11 @@ class Settings(BaseSettings):
     API_V1_STR: str = "/api"
     PROJECT_NAME: str = "Walmart Chatbot API"
     
-    # Grok API Configuration
-    GROK_API_KEY: str
+    # Grok API Configuration (old)
+    GROK_API_KEY: Optional[str] = None # Make it optional since we aren't using it
+
+    # Gemini API Configuration (NEW)
+    GOOGLE_API_KEY: str
     
     # Database Configuration
     DATABASE_URL: Optional[str] = "sqlite:///./walmart_chatbot.db"
