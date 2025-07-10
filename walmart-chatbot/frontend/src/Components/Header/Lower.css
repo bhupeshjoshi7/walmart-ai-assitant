@@ -1,0 +1,29 @@
+.lower-header {
+  list-style: none;
+  display: flex;
+  gap: 15px; /* optional spacing */
+  padding: 10px;
+  background-color:  #232F3E;
+ 
+  color: #ffffff;
+}
+
+.lower-header li {
+  padding: 1px;
+  cursor: pointer;
+  /* transition: border 0.2s ease; */
+}
+
+.lower-header li:hover {
+  border: 1px solid white;
+  /* border-radius: 4px; optional: for slightly rounded corners */
+}
+
+@media (max-width: 468px) {
+  .lower-header {
+    flex-wrap: wrap;
+    overflow-x: hidden;
+    justify-content: flex-start;
+  }
+}
+

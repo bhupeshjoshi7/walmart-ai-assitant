@@ -1,0 +1,99 @@
+/* General Product Styles */
+.product-card {
+  width: 100%;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  color: black;
+  text-decoration: none;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: transparent;
+  border-radius: 8px;
+  transition: transform 0.2s ease;
+}
+
+.product-card:hover {
+  transform: translateY(-3px);
+}
+
+/* Product image styles */
+.product-image {
+  width: 100%;
+  height: 200px;
+  object-fit: contain;
+  padding: 10px;
+  background-color: transparent;
+  border-radius: 8px;
+}
+
+/* Rating styles for both homepage and /payments page */
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 8px 0;
+}
+
+.rating .MuiRating-root {
+  font-size: 1.2rem;
+}
+
+
+/* Styling for rating stars on /payments page */
+.order-page .rating .MuiRating-root {
+  color:#d67622; 
+}
+
+.order-page .rating small {
+  color: #555; /* Text color for the review count */
+}
+
+/* Description styles */
+.description {
+  font-size: 0.9rem;
+  margin: 10px 0;
+  color: #333;
+}
+
+/* Show the Add to Cart button only on hover */
+.product-card:hover .button {
+  display: block;
+}
+
+.product-image-wrapper {
+  flex: 0 0 200px;
+}
+
+.product-details {
+  flex: 1;
+}
+
+.button {
+  display: none;
+}
+
+/* Remove border and box shadow for the Payments Page */
+.order-page .product-card {
+  box-shadow: none; /* Remove box shadow */
+  border: none; /* Remove border */
+  background-color: transparent; /* Transparent background */
+}
+
+/* Page Layout for grid */
+.product-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  max-width: 1450px;
+  margin: 100px auto;
+  gap: 10px;
+  justify-items: center;
+}
+
+/* Add responsive styles */
+@media screen and (max-width: 760px) {
+  .product-container {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+}
