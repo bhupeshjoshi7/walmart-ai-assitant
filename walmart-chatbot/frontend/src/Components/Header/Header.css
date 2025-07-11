@@ -1,0 +1,161 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+.fixed{
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header {
+  background-color: #1a1a1a;
+  display: flex;
+  align-items: center;
+  padding: 0 15px;
+  height: 70px;
+  color: white;
+  gap: 10px;
+  width: 100%;
+}
+
+.logo {
+  display: flex;
+  align-items: top;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  overflow: hidden;
+  border-radius: 50%; /* 👈 makes it circular */
+}
+
+.logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* 👈 crops the image while keeping aspect ratio */
+}
+
+.title {
+  padding-left: 15px;
+  padding-right: 8px;
+}
+
+
+.delivery-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 0 10px;
+  font-size: 12px;
+}
+
+.delivery-info p {
+  font-weight: bold;
+  margin-bottom: 2px;
+}
+
+.delivery-info span {
+  font-weight: normal;
+}
+
+.search-bar {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  background-color: white;
+  border-radius: 6px;
+  overflow: hidden;
+  margin: 0 10px;
+}
+
+.search-bar select {
+  padding: 5px;
+  font-size: 12px;
+  border: none;
+  background-color: #f3f3f3;
+}
+
+.search-bar input {
+  padding: 6px;
+  border: none;
+  font-size: 14px;
+  flex: 1;
+}
+
+.language-selector {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.language-selector select {
+  background-color: #1a1a1a;
+  color: white;
+  border: none;
+  font-size: 12px;
+  padding: 5px;
+}
+
+.flag-container {
+  display: flex;
+  align-items: center;
+}
+
+.flag-icon {
+  width: 25px;
+  height: 18px;
+  object-fit: cover;
+  border: 1px solid #ccc;
+  border-radius: 2px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.header-item {
+  display: flex;
+  flex-direction: column;
+  font-size: 12px;
+  color:white ;
+
+}
+
+.line1 {
+  /* font-weight: bold; */
+    color: #f3f3f3;
+  /* border-radius: 4%; */
+}
+.line1 :hover{
+  color: #ffffff;
+    border: 1px solid white;
+}
+
+.cart-icon {
+  display: flex;
+  align-items: center;
+  position: relative;
+background:rgb(203, 203, 1);
+}
+
+.cart-image {
+  width: 24px;
+  height: 24px;
+  margin-right: 5px;
+}
+
+.cart-count {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: red;
+  color: white;
+  font-size: 10px;
+  padding: 2px 5px;
+  border-radius: 50%;
+  font-weight: bold;
+}

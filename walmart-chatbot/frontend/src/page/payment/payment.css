@@ -1,0 +1,86 @@
+
+
+.payment-header {
+  padding: 20px;
+  text-align: center;
+  background-color: rgb(203, 203, 203);
+  font-size: large;
+}
+
+.payment-container {
+  padding: 30px;
+}
+
+.flex {
+  display: flex;
+  gap: 20px;
+  padding: 30px;
+}
+
+.flex h4 {
+  min-width: 300px;
+}
+
+.flex img {
+  width: 80px !important;
+}
+
+.flex div {
+  height: auto !important;
+}
+
+.payment-card-container {
+  max-width: 350px;
+  width: 100%;
+}
+
+.payment-price {
+  padding: 20px;
+}
+
+.payment-price > div {
+  display: flex;
+  font-size: 16px;
+  gap: 10px;
+}
+
+.payment-detail {
+  margin-top: 15px;
+  width: 100%;
+  border: none;
+  background-color: var(--primary-color);
+  border-radius: 5px;
+  padding: 8px 10px;
+  cursor: pointer;
+}
+
+/* Style the Pay Now button */
+button {
+  color: white;
+  width: 300px;
+  background-color: #e87008; /* Orange color */
+  padding: 12px 24px; /* Padding for the button */
+  border: none; /* Remove default border */
+  border-radius: 5px; /* Rounded corners */
+  cursor: pointer; /* Pointer cursor on hover */
+  font-size: 16px; /* Font size */
+  transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transition for hover effect */
+}
+
+/* Hover effect with a glowing light */
+.button-payment:hover {
+  background-color: #e76d00; /* Darker orange on hover */
+  box-shadow: 0 0 10px 3px rgba(231, 108, 0, 0.8); /* Light orange glow effect */
+}
+@media screen and (max-width:760px){
+  .flex{
+    flex-direction: column;
+  }
+}
+
+
+
+
+
+
+
