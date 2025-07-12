@@ -5,11 +5,9 @@ import styled from 'styled-components'
 
 
 function Chat(props) {
-    // props
     const bot = props.bot
     const messages = props.messages ? props.messages : []
 
-    // sender & bot message card
     const MessageCard = (props) => {
         return props.sender ? <div className=" sender  flex  mr-1  mb-4 items-end justify-end">
             <div className="flex flex-col space-y-2 text-xs sm:text-s max-w-xs  mx-2 items-start">
@@ -26,7 +24,6 @@ function Chat(props) {
             </div>
     }
 
-    // Input Message Submit Handler
     const submitHandler = (value) => {
         if (value) {
             props.setMessages([{ message: value, url: "https://picsum.photos/200/300", sender: true }, ...messages], value)
@@ -36,7 +33,6 @@ function Chat(props) {
 
     return (
         <Wrapper className="chat  flex flex-col flex-1 h-full  bg-gray-100">
-            {/*  Bot Profile and Cancel Button  */}
             <div class="flex sm:items-center justify-between p-3  border-b-2 border-gray-200">
                 <div class="flex items-center space-x-4">
                     <img src={bot.url} alt="" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full" />
@@ -62,7 +58,6 @@ function Chat(props) {
             </div>
 
 
-            {/* message container  */}
             <div className="chat-message overflow-y-scroll overflow-x-hidden  pl-2 flex flex-col-reverse   flex-grow ">
                 {messages.map((ele) => {
                     return <MessageCard url={ele.url} message={ele.message} sender={ele.sender} />
@@ -72,7 +67,6 @@ function Chat(props) {
 
 
 
-            {/* message form */}
             <form className="flex-shrink border-t-4 border-gray-200  p-3 " onSubmit={(event) => { event.preventDefault(); submitHandler(event.target[1].value); event.target[1].value = "" }}>
                 <div className="relative flex">
                     <span className="absolute inset-y-0 flex items-center">
@@ -97,7 +91,6 @@ function Chat(props) {
 
     )
 }
-//  Scroll Bar style
 export default Chat
 const Wrapper = styled.div`
      .chat-message::-webkit-scrollbar {

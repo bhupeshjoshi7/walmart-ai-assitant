@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { AnnotationIcon } from '@heroicons/react/solid'
 function Chatbutton(props) {
 
-    // Message Count Display 
     const Notification = ({ amount, state }) => {
         return state ? <div className="bg-red-500 text-white  rounded-full p-0.5 text-xs "> <p>{amount}</p></div> : <></>
     }
