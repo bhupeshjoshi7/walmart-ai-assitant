@@ -7,7 +7,6 @@ import styled from 'styled-components'
 function Chat(props) {
     const bot = props.bot
     const messages = props.messages ? props.messages : []
-
     const MessageCard = (props) => {
         return props.sender ? <div className=" sender  flex  mr-1  mb-4 items-end justify-end">
             <div className="flex flex-col space-y-2 text-xs sm:text-s max-w-xs  mx-2 items-start">
@@ -23,7 +22,6 @@ function Chat(props) {
                 </div>
             </div>
     }
-
     const submitHandler = (value) => {
         if (value) {
             props.setMessages([{ message: value, url: "https://picsum.photos/200/300", sender: true }, ...messages], value)
@@ -56,17 +54,11 @@ function Chat(props) {
                     </button>
                 </div>
             </div>
-
-
             <div className="chat-message overflow-y-scroll overflow-x-hidden  pl-2 flex flex-col-reverse   flex-grow ">
                 {messages.map((ele) => {
                     return <MessageCard url={ele.url} message={ele.message} sender={ele.sender} />
                 })}
             </div>
-
-
-
-
             <form className="flex-shrink border-t-4 border-gray-200  p-3 " onSubmit={(event) => { event.preventDefault(); submitHandler(event.target[1].value); event.target[1].value = "" }}>
                 <div className="relative flex">
                     <span className="absolute inset-y-0 flex items-center">
@@ -84,7 +76,7 @@ function Chat(props) {
                     </div>
                 </div>
                 <div className="flex pt-1 justify-end">
-                    <a href="https://github.com/swasthikshetty10" className="text-gray-400  text-xs"> by Swasthik shetty</a>
+                    <a href="#" className="text-gray-400  text-xs"> by Wali.io</a>
                 </div>
             </form>
         </Wrapper>
