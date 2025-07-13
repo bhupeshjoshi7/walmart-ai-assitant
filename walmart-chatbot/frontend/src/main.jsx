@@ -2,6 +2,7 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import { DataProvider } from './Components/dataprovider/DataProvider';
 import { initialState, reducer } from './utility/reducer';
+import './index.css';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
