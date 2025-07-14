@@ -63,8 +63,8 @@ async def ask_question(
                 context=context,
                 system_prompt=system_prompt
             )            
-        else:
-            response = await asyncio.to_thread(invoke_agent, request.message)
+        # else:
+        #     response = await asyncio.to_thread(invoke_agent, request.message)
         
         return ChatResponse(
             response=response,
