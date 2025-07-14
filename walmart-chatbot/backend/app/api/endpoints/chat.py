@@ -9,6 +9,7 @@ from app.services.product_service import ProductService
 from app.utils.exceptions import ChatbotException # Use our base exception
 from app.Agent import invoke_agent  # Import the agent function
 import logging
+import asyncio
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -59,13 +60,14 @@ async def ask_question(
                 system_prompt=system_prompt
             )            
         else:
-            response = invoke_agent(request.message)
+            response = await asyncio.to_thread(invoke_agent, request.message)
         
         return ChatResponse(
             response=response,
             sources=["product_data"] if request.product_id else [],
             is_fallback=False,
-            product_references=[request.product_id] if request.product_id else []
+            product_references=[request.product_id] if request.product_id else [],
+            confidence=None
         )
         
     except ChatbotException as e: # Catch our more generic chatbot exception

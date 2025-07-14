@@ -13,7 +13,7 @@ class ChatRequest(BaseModel):
 class ChatResponse(BaseModel):
     response: str
     sources: Optional[List[str]] = []
-    confidence: Optional[float]
+    confidence: Optional[float] = None
     is_fallback: Optional[bool] = False
     suggestions: Optional[List[str]] = []
     product_references: Optional[List[str]] = []

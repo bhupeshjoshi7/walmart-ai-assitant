@@ -15,11 +15,12 @@ load_dotenv()
 os.environ["GOOGLE_API_KEY"] = "AIzaSyCLEWpTnIj8Qg-Q36O0jRpFnASGxsF4tvw"
 # Initialize services
 langchainLLM = ChatGoogleGenerativeAI(
-    model="gemini-1.5-flash",
+    model="gemini-2.0-flash",
     temperature=0,
 )
+chkpoint = MemorySaver()
 memory = MemorySaver()
-geminiLLM = GeminiService()
+# geminiLLM = GeminiService()
 
 # Load products with error handling
 try:
@@ -38,6 +39,10 @@ When a user asks about specific products by name:
 1. First call get_productId to extract the product IDs
 2. Then call get_product_context to get detailed information about those products
 3. Use the context to provide a comprehensive answer
+
+when the queries don't mention specific names and the query if still related to products:
+then get the product context of the product you feel important to answer the query.
+if the query does not include product name then try to find appropriate prouct category and then ids within that category
 
 For general queries not mentioning specific products, provide a helpful general response."""
 
@@ -105,19 +110,25 @@ def get_product_context(product_ids: str) -> str:
 agent = create_react_agent(
     prompt=agent_system_prompt,
     model=langchainLLM,
+    checkpointer=chkpoint,
+    store=memory,
     tools=[get_productId, get_product_context],  # Both tools included
     debug=True,
 )
+
+messages=[]
 
 def invoke_agent(query: str) -> Dict[str, Any]:
     """
     Invokes the agent with the given query and returns the response.
     """
     try:
-        input_message = {"messages": [("user", query)]}
-        response = agent.invoke(input_message)
+        messages.append(("user",query))
+        input_message = {"messages": messages}
+        response = agent.invoke(input=input_message, config={"configurable":{"thread_id": "default", "session_id": "default" , "checkpoint_id": "default"}})
         print("-----------------------------")
         print(response["messages"][-1].content)
+        messages.append(("assistant", response["messages"][-1].content))
         return response["messages"][-1].content
     except Exception as e:
         return {"error": f"Agent invocation failed: {e}"}
