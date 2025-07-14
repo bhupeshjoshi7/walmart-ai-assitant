@@ -1,23 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { EmojiHappyIcon, XIcon } from '@heroicons/react/solid';
 import styled from 'styled-components';
 import axios from 'axios';
+import { useParams } from 'react-router-dom';
+
+const API_BASE_URL = 'http://127.0.0.1:8000/api';
 
 function Chat(props) {
-  const bot = props.bot;
+  const { bot, setMessages } = props;
   const messages = props.messages || [];
+  const { productId } = useParams();
+
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [sessionId, setSessionId] = useState(null);
 
+  // MessageCard component remains the same...
   const MessageCard = (props) => {
     return props.sender ? (
       <div className="sender flex mr-1 mb-4 items-end justify-end">
         <div className="flex flex-col space-y-2 text-xs sm:text-s max-w-xs mx-2 items-start">
-          <div>
-            <p className="px-4 py-2 rounded-lg inline-block bg-gray-300 text-gray-600">
-              {props.message}
-            </p>
-          </div>
+          <div><p className="px-4 py-2 rounded-lg inline-block bg-blue-500 text-white">{props.message}</p></div>
         </div>
         <img src={props.url} alt="User" className="w-6 h-6 rounded-full" />
       </div>
@@ -25,50 +28,65 @@ function Chat(props) {
       <div className="bot flex mb-4 items-end">
         <img src={props.url} alt="Bot" className="w-6 h-6 rounded-full" />
         <div className="flex flex-col space-y-2 text-xs sm:text-s max-w-xs mx-2 items-start">
-          <div>
-            <p className="px-4 py-2 rounded-lg bg-gray-300 text-gray-600">
-              {props.message}
-            </p>
-          </div>
+          <div><p className="px-4 py-2 rounded-lg bg-gray-300 text-gray-600">{props.message}</p></div>
         </div>
       </div>
     );
   };
 
-  const submitHandler = async (value) => {
-    if (!value.trim()) return;
+
+  // ==================== FIX STARTS HERE ====================
+
+  // 1. Change the handler to accept the event `e`
+  const submitHandler = async (e) => {
+    // 2. Prevent the default page reload behavior
+    e.preventDefault();
+
+    // 3. Get the message value from state and do the check
+    const messageToSend = inputValue;
+    if (!messageToSend.trim()) {
+      return; // Exit if the input is empty
+    }
 
     const userMessage = {
-      message: value,
-      url: 'https://picsum.photos/200/300',
+      message: messageToSend,
+      url: 'https://i.pravatar.cc/300?u=user',
       sender: true,
     };
-    props.setMessages([userMessage, ...messages], value);
+
+    setMessages((prevMessages) => [userMessage, ...prevMessages]);
+    setInputValue(''); // Clear input after sending
     setIsLoading(true);
 
     const requestBody = {
-      message: value,
-      product_id:'18',
-      session_id: 'test-session-123',
-      user_context: {},
+      message: messageToSend,
+      product_id: productId,
+      session_id: sessionId,
     };
 
     try {
-      const response = await axios.post('http://127.0.0.1:8000/api/chat/ask', requestBody);
+      const { data } = await axios.post(`${API_BASE_URL}/chat/ask`, requestBody);
+      
       const botMessage = {
-        message: response.data.response || 'Sorry, no response.',
-        url: bot.url || 'https://picsum.photos/200',
+        message: data.response || 'Sorry, I encountered an issue.',
+        url: bot.url || 'https://i.pravatar.cc/300?u=bot',
         sender: false,
       };
-      props.setMessages([botMessage, userMessage, ...messages], value);
+
+      setMessages((prevMessages) => [botMessage, ...prevMessages]);
+
+      if (data.session_id && !sessionId) {
+        setSessionId(data.session_id);
+      }
+
     } catch (error) {
       console.error('API error:', error);
       const errorMsg = {
         message: 'Something went wrong. Please try again.',
-        url: bot.url || 'https://picsum.photos/200',
+        url: bot.url || 'https://i.pravatar.cc/300?u=bot',
         sender: false,
       };
-      props.setMessages([errorMsg, userMessage, ...messages], value);
+      setMessages((prevMessages) => [errorMsg, ...prevMessages]);
     } finally {
       setIsLoading(false);
     }
@@ -76,69 +94,48 @@ function Chat(props) {
 
   return (
     <Wrapper className="chat flex flex-col flex-1 h-full bg-gray-100">
+      {/* ...Header is fine... */}
       <div className="flex sm:items-center justify-between p-3 border-b-2 border-gray-200">
         <div className="flex items-center space-x-4">
           <img src={bot.url} alt="" className="w-10 h-10 sm:w-12 sm:h-12 rounded-full" />
           <div className="flex flex-col leading-tight">
             <div className="text-xl sm:text-2xl mt-1 flex items-center">
               <span className="text-gray-700 mr-3">{bot.name}</span>
-              <span className="text-green-500">
-                <svg width="10" height="10">
-                  <circle cx="5" cy="5" r="5" fill="currentColor" />
-                </svg>
-              </span>
+              <span className="text-green-500"><svg width="10" height="10"><circle cx="5" cy="5" r="5" fill="currentColor" /></svg></span>
             </div>
             <span className="text-base text-gray-600">{bot.profile}</span>
           </div>
         </div>
         <div className="flex items-center space-x-2">
-          <button
-            type="button"
-            className="inline-flex items-center mr-2 justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none"
-            onClick={() => props.closeMessage()}
-          >
+          <button type="button" className="inline-flex items-center mr-2 justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none" onClick={() => props.closeMessage()}>
             <XIcon className="p-1" />
           </button>
         </div>
       </div>
 
+      {/* ...Message display is fine... */}
       <div className="chat-message overflow-y-scroll overflow-x-hidden pl-2 flex flex-col-reverse flex-grow">
         {messages.map((ele, index) => (
-          <MessageCard
-            key={index}
-            url={ele.url}
-            message={ele.message}
-            sender={ele.sender}
-          />
+          <MessageCard key={index} url={ele.url} message={ele.message} sender={ele.sender}/>
         ))}
         {isLoading && (
           <div className="bot flex mb-4 items-end">
             <img src={bot.url} alt="Bot" className="w-6 h-6 rounded-full" />
             <div className="flex flex-col space-y-2 text-xs sm:text-s max-w-xs mx-2 items-start">
-              <div>
-                <p className="px-4 py-2 rounded-lg bg-indigo-100 text-gray-600 italic">
-                  Typing...
-                </p>
-              </div>
+              <div><p className="px-4 py-2 rounded-lg bg-indigo-100 text-gray-600 italic">Typing...</p></div>
             </div>
           </div>
         )}
       </div>
-
+      
+      {/* 4. Pass the handler function directly to onSubmit */}
       <form
         className="flex-shrink border-t-4 border-gray-200 p-3"
-        onSubmit={(e) => {
-          e.preventDefault();
-          submitHandler(inputValue);
-          setInputValue('');
-        }}
+        onSubmit={submitHandler}
       >
         <div className="relative flex">
           <span className="absolute inset-y-0 flex items-center">
-            <button
-              type="button"
-              className="inline-flex items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none"
-            >
+            <button type="button" className="inline-flex items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none">
               <EmojiHappyIcon className="outline h-6 w-6 text-gray-500" />
             </button>
           </span>
@@ -154,28 +151,23 @@ function Chat(props) {
               type="submit"
               className="inline-flex items-center justify-center rounded-full h-10 w-10 sm:h-12 sm:w-12 transition duration-500 ease-in-out text-white bg-indigo-500 hover:bg-indigo-400 focus:outline-none"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                className="h-5 w-5 sm:h-6 sm:w-6 transform rotate-90"
-              >
-                <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
-              </svg>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5 sm:h-6 sm:w-6 transform rotate-90"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" /></svg>
             </button>
           </div>
         </div>
         <div className="flex pt-1 justify-end">
-          <a href="#" className="text-gray-400 text-xs">
-            by Wali.io
-          </a>
+          <a href="#" className="text-gray-400 text-xs">by Wali.io</a>
         </div>
       </form>
     </Wrapper>
   );
 }
 
+// ===================== FIX ENDS HERE =====================
+
 export default Chat;
+
+
 
 const Wrapper = styled.div`
   .chat-message::-webkit-scrollbar {
