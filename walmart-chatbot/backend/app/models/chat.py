@@ -5,18 +5,19 @@ from datetime import datetime
 
 class ChatRequest(BaseModel):
     message: str
+    product_ids: Optional[List[str]] = None
     product_id: Optional[str] = None
     session_id: Optional[str] = None
     user_context: Optional[Dict[str, Any]] = None
 
 class ChatResponse(BaseModel):
     response: str
-    sources: List[str] = []
-    confidence: float
-    is_fallback: bool = False
-    suggestions: List[str] = []
-    product_references: List[str] = []
-    timestamp: datetime = datetime.now()
+    sources: Optional[List[str]] = []
+    confidence: Optional[float]
+    is_fallback: Optional[bool] = False
+    suggestions: Optional[List[str]] = []
+    product_references: Optional[List[str]] = []
+    timestamp: Optional[datetime] = datetime.now()
 
 class ChatHistory(BaseModel):
     session_id: str

@@ -16,14 +16,14 @@ class ProductService:
         """Load mock product data from the products.json file."""
         try:
             # The data directory is relative to the backend root
-            with open("data/products.json", 'r') as f:
+            with open("products_new.json", 'r') as f:
                 products_data = json.load(f)
             
             # Use Pydantic to validate and parse the data into Product models
             return [Product(**product) for product in products_data]
         
         except FileNotFoundError:
-            logger.error("data/products.json not found. Please run generate_mock_data.py first.")
+            logger.error("products_new.json not found. Please run generate_mock_data.py first.")
             return []
         except Exception as e:
             logger.error(f"Error loading or parsing products.json: {e}")
@@ -60,6 +60,40 @@ class ProductService:
     async def get_product_context(self, product_id: str) -> str:
         """Get product context for RAG"""
         product = await self.get_product_by_id(product_id)
+        
+        context = f"""
+        Product: {product.title}
+        Brand: {product.brand}
+        Price: ${product.price} (Original: ${product.original_price})
+        Discount: {product.discount_percentage}%
+        Rating: {product.rating}/5 ({product.review_count} reviews)
+        Availability: {product.availability}
+        
+        Description: {product.description}
+        
+        Features: {', '.join(product.features)}
+        
+        Specifications: {json.dumps(product.specifications, indent=2)}
+        
+        Shipping: Free shipping: {product.shipping_info.free_shipping}, 
+        Estimated delivery: {product.shipping_info.estimated_delivery}
+        
+        Return Policy: {product.return_policy}
+        Warranty: {product.warranty}
+        """
+        
+        return context
+    
+    def get_product_by_id_synced(self, product_id: str) -> Product:
+        """Get product by ID"""
+        for product in self.products:
+            if product.id == product_id:
+                return product
+        raise ProductNotFoundError(f"Product with ID {product_id} not found")
+    
+    def get_product_context_synced(self, product_id: str) -> str:
+        """Get product context for RAG"""
+        product = self.get_product_by_id_synced(product_id)
         
         context = f"""
         Product: {product.title}
