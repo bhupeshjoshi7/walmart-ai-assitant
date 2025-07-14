@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 :root {
 --primary-color: #febd69;
 }
@@ -55,3 +56,12 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+=======
+body {
+  margin: 0;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+>>>>>>> 153436da427546f14f54d8b7387e7cf4614270c0
