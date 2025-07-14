@@ -1,58 +1,248 @@
-.product-detail {
+/* Loading Wrapper */
+.wali-loading-wrapper {
+  padding: 2rem;
+  text-align: center;
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Error Wrapper */
+.wali-error-wrapper {
+  padding: 2rem;
+  text-align: center;
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wali-error-content {
+  max-width: 400px;
+}
+
+.wali-error-content h2 {
+  color: #d32f2f;
+  margin-bottom: 1rem;
+}
+
+.wali-back-button {
+  background-color: #1976d2;
+  border: none;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 1rem;
+  font-size: 1rem;
+  transition: background-color 0.2s;
+}
+
+.wali-back-button:hover {
+  background-color: #1565c0;
+}
+
+/* Main Detail Layout */
+.wali-product-detail {
   display: flex;
   gap: 2rem;
   padding: 2rem;
   flex-wrap: wrap;
   align-items: flex-start;
   justify-content: center;
-  height: auto;
+  min-height: 60vh;
   background: #fff;
-  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+  margin: 1rem;
 }
 
-.product-detail img {
+/* Product Image Container */
+.wali-product-image-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+}
+
+/* Product Image */
+.wali-product-image {
   max-width: 300px;
   width: 100%;
   object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
 }
 
-.product-info {
+.wali-product-image:hover {
+  transform: scale(1.02);
+}
+
+/* Product Info Block */
+.wali-product-info {
   max-width: 500px;
+  flex: 1;
 }
 
-.product-info h2 {
+.wali-product-info h1 {
+  margin-bottom: 1rem;
+  color: #333;
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+/* Rating Section */
+.wali-rating-section {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   margin-bottom: 1rem;
 }
 
-.product-info p.description {
-  margin-top: 1rem;
-  line-height: 1.6;
-  color: #444;
+.wali-rating-count {
+  color: #666;
+  font-size: 0.9rem;
 }
 
-.product-info button {
+/* Price Section */
+.wali-price-section {
+  margin-bottom: 1rem;
+}
+
+.wali-price-section .currency-format {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #e47911;
+}
+
+/* Description Text */
+.wali-description {
+  margin-top: 1rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+  color: #444;
+  font-size: 1rem;
+}
+
+/* Actions Section */
+.wali-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Add to Cart Button */
+.wali-add-to-cart-button {
   background-color: #ff9900;
   border: none;
   color: white;
-  padding: 0.5rem 1rem;
+  padding: 0.75rem 1.5rem;
   border-radius: 6px;
   cursor: pointer;
-  margin-top: 1rem;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: all 0.2s;
+  min-width: 120px;
+  position: relative;
 }
 
-.product-info button:hover {
+.wali-add-to-cart-button:hover:not(:disabled) {
   background-color: #e68a00;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* ✅ Responsive */
-@media screen and (max-width: 760px) {
-  .product-detail {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
+.wali-add-to-cart-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.wali-add-to-cart-button.loading {
+  background-color: #cccccc;
+}
+
+.wali-add-to-cart-button.loading::after {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  margin: auto;
+  border: 2px solid transparent;
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+@keyframes spin {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* ✅ Responsive Design */
+/* Mobile First - Default styles for mobile devices */
+.wali-product-detail {
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 1rem;
+  margin: 0.5rem;
+}
+
+.wali-product-info {
+  max-width: 100%;
+}
+
+.wali-product-image {
+  max-width: 250px;
+}
+
+.wali-actions {
+  justify-content: center;
+}
+
+.wali-product-info h1 {
+  font-size: 1.25rem;
+}
+
+.wali-add-to-cart-button {
+  width: 30%;
+}
+
+/* Tablet and larger screens */
+@media screen and (min-width: 768px) {
+  .wali-product-detail {
+    flex-direction: row;
+    align-items: flex-start;
+    text-align: left;
+    padding: 2rem;
+    margin: 1rem;
   }
 
-  .product-info {
-    max-width: 90%;
+  .wali-product-info {
+    max-width: 60%;
+  }
+
+  .wali-product-image {
+    max-width: 400px;
+  }
+
+  .wali-actions {
+    justify-content: flex-start;
+  }
+
+  .wali-product-info h1 {
+    font-size: 2rem;
+  }
+
+  .wali-add-to-cart-button {
+    width: auto;
+    min-width: 150px;
   }
 }

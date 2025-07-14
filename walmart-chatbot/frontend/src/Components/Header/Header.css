@@ -3,13 +3,14 @@
   padding: 0;
   box-sizing: border-box;
 }
-.fixed{
+
+.wali-wrapper {
   position: sticky;
   top: 0;
   z-index: 100;
 }
 
-.header {
+.wali-header {
   background-color: #1a1a1a;
   display: flex;
   align-items: center;
@@ -20,47 +21,28 @@
   width: 100%;
 }
 
-.logo {
+.wali-logo {
   display: flex;
   align-items: top;
   justify-content: center;
   width: 50px;
   height: 50px;
   overflow: hidden;
-  border-radius: 50%; /* 👈 makes it circular */
+  border-radius: 50%;
 }
 
-.logo img {
+.wali-logo img {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* 👈 crops the image while keeping aspect ratio */
+  object-fit: cover;
 }
 
-.title {
+.wali-title {
   padding-left: 15px;
   padding-right: 8px;
 }
 
-
-.delivery-info {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  padding: 0 10px;
-  font-size: 12px;
-}
-
-.delivery-info p {
-  font-weight: bold;
-  margin-bottom: 2px;
-}
-
-.delivery-info span {
-  font-weight: normal;
-}
-
-.search-bar {
+.wali-search-bar {
   display: flex;
   flex: 1;
   align-items: center;
@@ -70,85 +52,56 @@
   margin: 0 10px;
 }
 
-.search-bar select {
+.wali-search-bar select {
   padding: 5px;
   font-size: 12px;
   border: none;
   background-color: #f3f3f3;
 }
 
-.search-bar input {
+.wali-search-bar input {
   padding: 6px;
   border: none;
   font-size: 14px;
   flex: 1;
 }
 
-.language-selector {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.language-selector select {
-  background-color: #1a1a1a;
-  color: white;
-  border: none;
-  font-size: 12px;
-  padding: 5px;
-}
-
-.flag-container {
-  display: flex;
-  align-items: center;
-}
-
-.flag-icon {
-  width: 25px;
-  height: 18px;
-  object-fit: cover;
-  border: 1px solid #ccc;
-  border-radius: 2px;
-}
-
-.header-right {
+.wali-header-right {
   display: flex;
   align-items: center;
   gap: 15px;
 }
 
-.header-item {
+.wali-header-item {
   display: flex;
   flex-direction: column;
   font-size: 12px;
-  color:white ;
-
+  color: white;
 }
 
-.line1 {
-  /* font-weight: bold; */
-    color: #f3f3f3;
-  /* border-radius: 4%; */
+.wali-line1 {
+  color: #f3f3f3;
 }
-.line1 :hover{
+
+.wali-line1:hover {
   color: #ffffff;
-    border: 1px solid white;
+  border: 1px solid white;
 }
 
-.cart-icon {
+.wali-cart-icon {
   display: flex;
   align-items: center;
   position: relative;
-background:rgb(203, 203, 1);
+  background: rgb(203, 203, 1);
 }
 
-.cart-image {
+.wali-cart-image {
   width: 24px;
   height: 24px;
   margin-right: 5px;
 }
 
-.cart-count {
+.wali-cart-count {
   position: absolute;
   top: -8px;
   right: -8px;

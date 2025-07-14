@@ -23,7 +23,7 @@ function App() {
   const bot = {
     name: "Wali",
     url: "https://cdn.discordapp.com/avatars/630686815736692746/89a1377032b7030586ba964485ca23fc.webp?size=1024",
-    profile: "Walmart's Assistan",
+    profile: "Walmart's Assistant",
   };
 
   const [messages, setMessages] = useState([]);
@@ -51,16 +51,32 @@ function App() {
   return (
     <Router>
       <CssBaseline />
-      <Routing />
-      <div className="h-screen relative">
-        <div className="absolute flex bottom-2 right-2 sm:bottom-6 sm:right-6 z-50">
-          <Widget
-            className="bottom-0"
-            style={{ height: "80vh", width: "370px", backgroundColor: "red" }}
-            bot={bot}
-            setMessages={handleMessages}
-            messages={messages}
-          />
+      <div style={{ position: 'relative', minHeight: '100vh', minWidth: '100%'}}>
+        <Routing />
+        
+        {/* Fixed positioning for the bot widget */}
+        <div 
+          style={{
+            position: 'fixed',
+            bottom: '30px',
+            right: '30px',
+            zIndex: 1000,
+            pointerEvents: 'none' // Allows clicks to pass through the container
+          }}
+        >
+          <div style={{ pointerEvents: 'auto' }}> {/* Re-enable pointer events for the widget */}
+            <Widget
+              style={{ 
+                height: "80vh", 
+                width: "370px", 
+                maxHeight: "600px", // Prevent it from being too tall on small screens
+                backgroundColor: "transparent" // Remove red background
+              }}
+              bot={bot}
+              setMessages={handleMessages}
+              messages={messages}
+            />
+          </div>
         </div>
       </div>
     </Router>

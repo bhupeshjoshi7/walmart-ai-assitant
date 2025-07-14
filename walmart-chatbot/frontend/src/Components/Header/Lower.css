@@ -1,29 +1,32 @@
-.lower-header {
+.wali-lower-header {
   list-style: none;
   display: flex;
-  gap: 15px; /* optional spacing */
+  gap: 15px;
   padding: 10px;
-  background-color:  #232F3E;
- 
+  background-color: #232F3E;
   color: #ffffff;
+  margin: 0;
 }
 
-.lower-header li {
+.wali-menu-item {
   padding: 1px;
   cursor: pointer;
-  /* transition: border 0.2s ease; */
 }
 
-.lower-header li:hover {
+.wali-menu-item:hover {
   border: 1px solid white;
-  /* border-radius: 4px; optional: for slightly rounded corners */
 }
 
+.wali-menu-icon {
+  margin-right: 5px;
+  vertical-align: middle;
+}
+
+/* Responsive */
 @media (max-width: 468px) {
-  .lower-header {
+  .wali-lower-header {
     flex-wrap: wrap;
     overflow-x: hidden;
     justify-content: flex-start;
   }
 }
-

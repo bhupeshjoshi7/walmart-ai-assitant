@@ -1,73 +1,57 @@
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { DataContext } from '../dataprovider/DataProvider'; // Your context
-import { auth } from '../../utility/firebase'; // Firebase auth
-import Lowerheader from '../Header/Lowerheader'; // Assuming this is your custom component
+import { DataContext } from '../dataprovider/DataProvider';
+import { auth } from '../../utility/firebase';
+import Lowerheader from '../Header/Lowerheader';
 import './Header.css';
 
 function Header() {
-  const [{ basket, user }] = useContext(DataContext); // Access user and basket from context
-
+  const [{ basket, user }] = useContext(DataContext);
   const totalItem = basket?.reduce((amount, item) => item.amount + amount, 0);
 
-  // Sign Out Handler
   const handleAuth = () => {
     if (user) {
-      auth.signOut(); // Sign out using Firebase
+      auth.signOut();
     }
   };
 
   return (
-    <section className="fixed">
-      <header className="header">
+    <section className="wali-wrapper">
+      <header className="wali-header">
         {/* Logo */}
-        <div className="logo">
+        <div className="wali-logo">
           <Link to="/">
-            <img
-              src="/Wali.png"
-              alt="Wali"
-              
-            />
+            <img src="/Wali.png" alt="Wali" />
           </Link>
         </div>
-        <div className="title">
+
+        <div className="wali-title">
           <h1>Wali.io</h1>
         </div>
 
-
         {/* Search Bar */}
-        <div className="search-bar">
+        <div className="wali-search-bar">
           <select name="categories" id="categories">
             <option value="all">All</option>
           </select>
           <input type="text" placeholder="Search" />
         </div>
 
-
         {/* Right Section */}
-        <div className="header-right">
-          {/* Sign In / Sign Out */}
+        <div className="wali-header-right">
           <div>
             <h4>Welcome</h4>
           </div>
 
-          {/* Returns & Orders */}
-          {/* <div className="header-item">
-            <Link to="/returns" className="line1">
-              <div>Returns</div>
-              <div>& Orders</div>
-            </Link>
-          </div> */}
-
           {/* Cart */}
-          <div className="header-item cart-icon">
-            <Link to="/cart" className="cart-icon">
+          <div className="wali-header-item wali-cart-icon">
+            <Link to="/cart" className="wali-cart-icon">
               <img
                 src="https://cdn-icons-png.flaticon.com/512/833/833314.png"
                 alt="Cart"
-                className="cart-image"
+                className="wali-cart-image"
               />
-              <span className="cart-count">{totalItem}</span>
+              <span className="wali-cart-count">{totalItem}</span>
             </Link>
           </div>
         </div>
