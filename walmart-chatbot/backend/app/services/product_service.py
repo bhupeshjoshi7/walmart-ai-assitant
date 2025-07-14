@@ -23,7 +23,7 @@ class ProductService:
             return [Product(**product) for product in products_data]
         
         except FileNotFoundError:
-            logger.error("products_new.json not found. Please run generate_mock_data.py first.")
+            logger.error("data/products.json not found. Please run generate_mock_data.py first.")
             return []
         except Exception as e:
             logger.error(f"Error loading or parsing products.json: {e}")
@@ -93,8 +93,11 @@ class ProductService:
     
     def get_product_context_synced(self, product_id: str) -> str:
         """Get product context for RAG"""
-        product = self.get_product_by_id_synced(product_id)
-        
+        product = ""
+        for product in self.products:
+            if product.id == product_id:
+                product = product
+                break
         context = f"""
         Product: {product.title}
         Brand: {product.brand}

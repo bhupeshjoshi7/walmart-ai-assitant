@@ -12,7 +12,7 @@ from dotenv import load_dotenv
 import os
 from langchain_google_genai import ChatGoogleGenerativeAI
 load_dotenv()
-os.environ["GOOGLE_API_KEY"] = "AIzaSyCLEWpTnIj8Qg-Q36O0jRpFnASGxsF4tvw"
+os.environ["GOOGLE_API_KEY"] = os.getenv("GOOGLE_API_KEY")
 # Initialize services
 langchainLLM = ChatGoogleGenerativeAI(
     model="gemini-2.0-flash",
