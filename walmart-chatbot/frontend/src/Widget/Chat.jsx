@@ -1,191 +1,223 @@
-import React, { useState } from 'react';
-import { EmojiHappyIcon, XIcon } from '@heroicons/react/solid';
-import styled from 'styled-components';
-import axios from 'axios';
+import React, { useState, useRef, useEffect } from 'react';
+import { Smile, X, Send, Circle, MoreVertical, Phone, Video } from 'lucide-react';
 
 function Chat(props) {
-  const bot = props.bot;
-  const messages = props.messages || [];
-  const [inputValue, setInputValue] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+    const bot = props.bot || { name: 'AI Assistant', profile: 'Online', url: 'https://picsum.photos/100/100?random=1' };
+    const messages = props.messages ? props.messages : [];
+    const messagesEndRef = useRef(null);
+    const [inputValue, setInputValue] = useState('');
+    const [isTyping, setIsTyping] = useState(false);
 
-  const MessageCard = (props) => {
-    return props.sender ? (
-      <div className="sender flex mr-1 mb-4 items-end justify-end">
-        <div className="flex flex-col space-y-2 text-xs sm:text-s max-w-xs mx-2 items-start">
-          <div>
-            <p className="px-4 py-2 rounded-lg inline-block bg-gray-300 text-gray-600">
-              {props.message}
-            </p>
-          </div>
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    };
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
+
+    const MessageCard = ({ message, sender, url, timestamp = "12:34 PM" }) => {
+        return (
+            <div className={`flex mb-6 ${sender ? 'justify-end' : 'justify-start'} group`}>
+                {!sender && (
+                    <div className="flex-shrink-0 mr-3">
+                        <img 
+                            src={url} 
+                            alt="Bot profile" 
+                            className="w-10 h-10 rounded-full object-cover ring-2 ring-white shadow-lg" 
+                        />
+                    </div>
+                )}
+                <div className="flex flex-col max-w-xs lg:max-w-md">
+                    <div className={`px-6 py-3 rounded-3xl relative ${
+                        sender 
+                            ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-br-lg shadow-lg' 
+                            : 'bg-white text-gray-800 rounded-bl-lg shadow-lg border border-gray-100'
+                    }`}>
+                        <p className="text-sm leading-relaxed">{message}</p>
+                        {sender && (
+                            <div className="absolute -bottom-1 -right-1 w-0 h-0 border-l-8 border-l-blue-600 border-t-8 border-t-transparent border-b-8 border-b-transparent"></div>
+                        )}
+                        {!sender && (
+                            <div className="absolute -bottom-1 -left-1 w-0 h-0 border-r-8 border-r-white border-t-8 border-t-transparent border-b-8 border-b-transparent"></div>
+                        )}
+                    </div>
+                    <div className={`text-xs text-gray-400 mt-1 ${sender ? 'text-right' : 'text-left'}`}>
+                        {timestamp}
+                    </div>
+                </div>
+                {sender && (
+                    <div className="flex-shrink-0 ml-3">
+                        <img 
+                            src={url} 
+                            alt="User profile" 
+                            className="w-10 h-10 rounded-full object-cover ring-2 ring-white shadow-lg" 
+                        />
+                    </div>
+                )}
+            </div>
+        );
+    };
+
+    const submitHandler = () => {
+        if (inputValue.trim()) {
+            props.setMessages && props.setMessages([
+                { 
+                    message: inputValue.trim(), 
+                    url: "https://picsum.photos/100/100?random=2", 
+                    sender: true 
+                }, 
+                ...messages
+            ]);
+            setInputValue('');
+            
+            // Simulate bot typing
+            setIsTyping(true);
+            setTimeout(() => {
+                setIsTyping(false);
+                props.setMessages && props.setMessages([
+                    { 
+                        message: "Thanks for your message! I'm here to help.", 
+                        url: bot.url, 
+                        sender: false 
+                    },
+                    { 
+                        message: inputValue.trim(), 
+                        url: "https://picsum.photos/100/100?random=2", 
+                        sender: true 
+                    }, 
+                    ...messages
+                ]);
+            }, 1500);
+        }
+    };
+
+    const TypingIndicator = () => (
+        <div className="flex justify-start mb-6">
+            <div className="flex-shrink-0 mr-3">
+                <img 
+                    src={bot.url} 
+                    alt="Bot profile" 
+                    className="w-10 h-10 rounded-full object-cover ring-2 ring-white shadow-lg" 
+                />
+            </div>
+            <div className="bg-white rounded-3xl rounded-bl-lg px-6 py-4 shadow-lg border border-gray-100">
+                <div className="flex space-x-2">
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                </div>
+            </div>
         </div>
-        <img src={props.url} alt="User" className="w-6 h-6 rounded-full" />
-      </div>
-    ) : (
-      <div className="bot flex mb-4 items-end">
-        <img src={props.url} alt="Bot" className="w-6 h-6 rounded-full" />
-        <div className="flex flex-col space-y-2 text-xs sm:text-s max-w-xs mx-2 items-start">
-          <div>
-            <p className="px-4 py-2 rounded-lg bg-gray-300 text-gray-600">
-              {props.message}
-            </p>
-          </div>
-        </div>
-      </div>
     );
-  };
 
-  const submitHandler = async (value) => {
-    if (!value.trim()) return;
-
-    const userMessage = {
-      message: value,
-      url: 'https://picsum.photos/200/300',
-      sender: true,
-    };
-    props.setMessages([userMessage, ...messages], value);
-    setIsLoading(true);
-
-    const requestBody = {
-      message: value,
-      product_id:'18',
-      session_id: 'test-session-123',
-      user_context: {},
-    };
-
-    try {
-      const response = await axios.post('http://127.0.0.1:8000/api/chat/ask', requestBody);
-      const botMessage = {
-        message: response.data.response || 'Sorry, no response.',
-        url: bot.url || 'https://picsum.photos/200',
-        sender: false,
-      };
-      props.setMessages([botMessage, userMessage, ...messages], value);
-    } catch (error) {
-      console.error('API error:', error);
-      const errorMsg = {
-        message: 'Something went wrong. Please try again.',
-        url: bot.url || 'https://picsum.photos/200',
-        sender: false,
-      };
-      props.setMessages([errorMsg, userMessage, ...messages], value);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  return (
-    <Wrapper className="chat flex flex-col flex-1 h-full bg-gray-100">
-      <div className="flex sm:items-center justify-between p-3 border-b-2 border-gray-200">
-        <div className="flex items-center space-x-4">
-          <img src={bot.url} alt="" className="w-10 h-10 sm:w-12 sm:h-12 rounded-full" />
-          <div className="flex flex-col leading-tight">
-            <div className="text-xl sm:text-2xl mt-1 flex items-center">
-              <span className="text-gray-700 mr-3">{bot.name}</span>
-              <span className="text-green-500">
-                <svg width="10" height="10">
-                  <circle cx="5" cy="5" r="5" fill="currentColor" />
-                </svg>
-              </span>
+    return (
+        <div className="flex flex-col h-full bg-gradient-to-br from-gray-50 via-white to-gray-100">
+            {/* Header */}
+            <div className="flex items-center justify-between p-6 bg-white/90 backdrop-blur-sm border-b border-gray-200/50 shadow-sm">
+                <div className="flex items-center space-x-4">
+                    <div className="relative">
+                        <img 
+                            src={bot.url} 
+                            alt={bot.name} 
+                            className="w-12 h-12 rounded-full object-cover ring-2 ring-white shadow-lg" 
+                        />
+                        <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white flex items-center justify-center">
+                            <Circle className="w-2 h-2 fill-current" />
+                        </div>
+                    </div>
+                    <div>
+                        <h3 className="text-lg font-semibold text-gray-900">{bot.name}</h3>
+                        <p className="text-sm text-green-500 font-medium">{bot.profile}</p>
+                    </div>
+                </div>
+                <div className="flex items-center space-x-2">
+                    <button 
+                        type="button" 
+                        className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
+                    >
+                        <Phone className="w-5 h-5 text-gray-500" />
+                    </button>
+                    <button 
+                        type="button" 
+                        className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
+                    >
+                        <Video className="w-5 h-5 text-gray-500" />
+                    </button>
+                    <button 
+                        type="button" 
+                        className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
+                    >
+                        <MoreVertical className="w-5 h-5 text-gray-500" />
+                    </button>
+                    <button 
+                        type="button" 
+                        className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
+                        onClick={() => props.closeMessage && props.closeMessage()}
+                    >
+                        <X className="w-5 h-5 text-gray-500" />
+                    </button>
+                </div>
             </div>
-            <span className="text-base text-gray-600">{bot.profile}</span>
-          </div>
-        </div>
-        <div className="flex items-center space-x-2">
-          <button
-            type="button"
-            className="inline-flex items-center mr-2 justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none"
-            onClick={() => props.closeMessage()}
-          >
-            <XIcon className="p-1" />
-          </button>
-        </div>
-      </div>
 
-      <div className="chat-message overflow-y-scroll overflow-x-hidden pl-2 flex flex-col-reverse flex-grow">
-        {messages.map((ele, index) => (
-          <MessageCard
-            key={index}
-            url={ele.url}
-            message={ele.message}
-            sender={ele.sender}
-          />
-        ))}
-        {isLoading && (
-          <div className="bot flex mb-4 items-end">
-            <img src={bot.url} alt="Bot" className="w-6 h-6 rounded-full" />
-            <div className="flex flex-col space-y-2 text-xs sm:text-s max-w-xs mx-2 items-start">
-              <div>
-                <p className="px-4 py-2 rounded-lg bg-indigo-100 text-gray-600 italic">
-                  Typing...
-                </p>
-              </div>
+            {/* Messages */}
+            <div className="flex-1 overflow-y-auto p-6 space-y-2">
+                <div className="flex flex-col-reverse">
+                    {messages.map((ele, index) => (
+                        <MessageCard 
+                            key={index}
+                            url={ele.url} 
+                            message={ele.message} 
+                            sender={ele.sender} 
+                        />
+                    ))}
+                    {isTyping && <TypingIndicator />}
+                </div>
+                <div ref={messagesEndRef} />
             </div>
-          </div>
-        )}
-      </div>
 
-      <form
-        className="flex-shrink border-t-4 border-gray-200 p-3"
-        onSubmit={(e) => {
-          e.preventDefault();
-          submitHandler(inputValue);
-          setInputValue('');
-        }}
-      >
-        <div className="relative flex">
-          <span className="absolute inset-y-0 flex items-center">
-            <button
-              type="button"
-              className="inline-flex items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none"
-            >
-              <EmojiHappyIcon className="outline h-6 w-6 text-gray-500" />
-            </button>
-          </span>
-          <input
-            type="text"
-            placeholder="Write Something"
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            className="w-full focus:outline-none focus:placeholder-gray-400 text-gray-600 placeholder-gray-600 pl-12 bg-gray-200 rounded-full py-2 sm:py-3"
-          />
-          <div className="absolute right-0 items-center inset-y-0 sm:flex">
-            <button
-              type="submit"
-              className="inline-flex items-center justify-center rounded-full h-10 w-10 sm:h-12 sm:w-12 transition duration-500 ease-in-out text-white bg-indigo-500 hover:bg-indigo-400 focus:outline-none"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                className="h-5 w-5 sm:h-6 sm:w-6 transform rotate-90"
-              >
-                <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
-              </svg>
-            </button>
-          </div>
+            {/* Input Form */}
+            <div className="p-6 bg-white/90 backdrop-blur-sm border-t border-gray-200/50">
+                <div className="flex items-center space-x-4">
+                    <button 
+                        type="button" 
+                        className="p-3 rounded-full hover:bg-gray-100 transition-colors duration-200 flex-shrink-0"
+                    >
+                        <Smile className="w-5 h-5 text-gray-500" />
+                    </button>
+                    
+                    <div className="flex-1 relative">
+                        <input
+                            type="text"
+                            value={inputValue}
+                            onChange={(e) => setInputValue(e.target.value)}
+                            onKeyPress={(e) => e.key === 'Enter' && submitHandler()}
+                            placeholder="Type a message..."
+                            className="w-full px-6 py-3 bg-gray-100 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all duration-200 text-gray-800 placeholder-gray-500"
+                        />
+                    </div>
+                    
+                    <button 
+                        type="button"
+                        onClick={submitHandler}
+                        disabled={!inputValue.trim()}
+                        className="p-3 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed transition-all duration-200 flex-shrink-0 shadow-lg"
+                    >
+                        <Send className="w-5 h-5 text-white" />
+                    </button>
+                </div>
+                
+                <div className="flex justify-center mt-4">
+                    <a 
+                        href="#" 
+                        className="text-xs text-gray-400 hover:text-gray-600 transition-colors duration-200 font-medium"
+                    >
+                        Powered by Wali.io
+                    </a>
+                </div>
+            </div>
         </div>
-        <div className="flex pt-1 justify-end">
-          <a href="#" className="text-gray-400 text-xs">
-            by Wali.io
-          </a>
-        </div>
-      </form>
-    </Wrapper>
-  );
+    );
 }
 
 export default Chat;
-
-const Wrapper = styled.div`
-  .chat-message::-webkit-scrollbar {
-    width: 0.12rem;
-  }
-  .chat-message::-webkit-scrollbar-track {
-    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.2);
-  }
-  .chat-message::-webkit-scrollbar-thumb {
-    background-color: rgb(79, 70, 229);
-    outline: 1px solid rgb(79, 70, 229);
-  }
-`;

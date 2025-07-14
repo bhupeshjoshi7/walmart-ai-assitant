@@ -7,7 +7,9 @@ from app.services.gemini_service import GeminiService # <-- IMPORT NEW SERVICE
 from app.services.product_service import ProductService
 # from app.utils.exceptions import GrokAPIError # No longer needed
 from app.utils.exceptions import ChatbotException # Use our base exception
+from app.Agent import invoke_agent  # Import the agent function
 import logging
+import asyncio
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -32,31 +34,44 @@ async def ask_question(
 ):
     """Main chat endpoint"""
     try:
-        # Get product context if product_id is provided
-        context = ""
-        if request.product_id:
-            context = await product_service.get_product_context(request.product_id)
-        
-        # Define system prompt
         system_prompt = """You are a helpful Walmart customer service assistant. 
         You should only answer questions about the provided product information.
         If asked about unrelated topics, politely redirect the conversation back to the product.
         Be concise, helpful, and friendly."""
-        
-        # Generate response using Gemini
-        response = await gemini_service.generate_response(
-            prompt=request.message,
-            context=context,
-            system_prompt=system_prompt
-        )
+        # Get product context if product_id is provided
+        context = ""
+        if request.product_ids:
+            # If multiple product IDs, fetch context for each
+            for i in request.product_ids:
+                logger.info(f"Fetching context for product ID: {i}")
+                pIdContext = await product_service.get_product_context(i)
+                context += "\n"  + (pIdContext)
+
+            system_prompt += "if you dont know the answer then just say 'None' and do not try to answer the question"
+            response = await gemini_service.generate_response(
+                prompt=request.message,
+                context=context,
+                system_prompt=system_prompt
+            )
+            if "None" in response:
+                response = await asyncio.to_thread(invoke_agent, request.message)
+            
+        elif request.product_id:
+            context = await product_service.get_product_context(request.product_id)
+            response = await gemini_service.generate_response(
+                prompt=request.message,
+                context=context,
+                system_prompt=system_prompt
+            )            
+        else:
+            response = await asyncio.to_thread(invoke_agent, request.message)
         
         return ChatResponse(
             response=response,
             sources=["product_data"] if request.product_id else [],
-            confidence=0.90, # We can be more confident now
             is_fallback=False,
-            suggestions=["Tell me more about features", "What's the price?", "Is it in stock?"],
-            product_references=[request.product_id] if request.product_id else []
+            product_references=[request.product_id] if request.product_id else [],
+            confidence=None
         )
         
     except ChatbotException as e: # Catch our more generic chatbot exception
@@ -71,10 +86,11 @@ async def ask_question(
     except Exception as e:
         logger.error(f"Chat error: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
-
+    
 # The feedback endpoint remains unchanged
 @router.post("/feedback")
 async def submit_feedback(feedback: ChatFeedback):
     """Submit chat feedback"""
     logger.info(f"Received feedback: {feedback.dict()}")
     return {"message": "Feedback received successfully"}
+

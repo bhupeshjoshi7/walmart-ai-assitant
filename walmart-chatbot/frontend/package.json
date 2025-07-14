@@ -18,6 +18,7 @@
     "@stripe/stripe-js": "^7.4.0",
     "axios": "^1.10.0",
     "firebase": "^11.9.0",
+    "lucide-react": "^0.525.0",
     "numeral": "^2.0.6",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
