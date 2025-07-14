@@ -32,7 +32,10 @@ class ProductService:
     async def get_product_by_id(self, product_id: str) -> Product:
         """Get product by ID"""
         for product in self.products:
+            
             if product.id == product_id:
+                print(type(product.id))
+                # print(type(product_id))
                 return product
         raise ProductNotFoundError(f"Product with ID {product_id} not found")
     

@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     GROK_API_KEY: Optional[str] = None # Make it optional since we aren't using it
 
     # Gemini API Configuration (NEW)
-    GOOGLE_API_KEY: str
+    GOOGLE_API_KEY: str ="AIzaSyD-THZCeWESJTggq0WB70AJrob3elwLvpg"
     
     # Database Configuration
     DATABASE_URL: Optional[str] = "sqlite:///./walmart_chatbot.db"
