@@ -47,11 +47,15 @@ async def ask_question(
                 pIdContext = await product_service.get_product_context(i)
                 context += "\n"  + (pIdContext)
 
+            system_prompt += "if you dont know the answer then just say 'None' and do not try to answer the question"
             response = await gemini_service.generate_response(
                 prompt=request.message,
                 context=context,
                 system_prompt=system_prompt
             )
+            if "None" in response:
+                response = await asyncio.to_thread(invoke_agent, request.message)
+            
         elif request.product_id:
             context = await product_service.get_product_context(request.product_id)
             response = await gemini_service.generate_response(
